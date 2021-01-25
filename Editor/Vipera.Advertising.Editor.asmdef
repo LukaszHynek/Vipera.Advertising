@@ -1,0 +1,17 @@
+{
+    "name": "Vipera.Advertising.Editor",
+    "references": [
+        "GUID:ec4e2dc7fbe0d834b9421b7b2a5224e0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

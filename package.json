@@ -1,0 +1,15 @@
+{
+  "name": "com.vipera.advertising",
+  "displayName": "Vipera Advertising",
+  "version": "1.0.0",
+  "unity": "2017.1",
+  "keywords": [
+    "Advertising",
+    "IronSource"
+  ],
+  "description": "Custom, clean IronSource Advertising implementation",
+  "hideInEditor": false,
+  "author": {
+    "name": "Vipera Games"
+  }
+}
