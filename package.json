@@ -11,5 +11,9 @@
   "hideInEditor": false,
   "author": {
     "name": "Vipera Games"
+  },
+  "dependencies": {
+    "com.google.external-dependency-manager": "1.2.163",
+    "com.google.firebase.analytics": "7.0.2"
   }
 }
