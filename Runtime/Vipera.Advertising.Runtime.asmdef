@@ -1,3 +1,27 @@
-﻿{
-	"name": "Vipera.Advertising"
+{
+    "name": "Vipera.Advertising.Runtime",
+    "references": [
+        "Vipera.Firebase.Runtime",
+        "Vipera.Core.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.vipera.firebase",
+            "expression": "",
+            "define": "VIPERA_FIREBASE"
+        },
+        {
+            "name": "com.vipera.core",
+            "expression": "",
+            "define": "VIPERA_CORE"
+        }
+    ],
+    "noEngineReferences": false
 }
