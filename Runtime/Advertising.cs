@@ -69,8 +69,6 @@ namespace Vipera
                 admob_android_appid = loadedSettings.admob_android_appid;
                 admob_ios_appid = loadedSettings.admob_ios_appid;
 
-                Debug.Log(JsonUtility.ToJson(loadedSettings));
-
                 return true;
             }
             catch
