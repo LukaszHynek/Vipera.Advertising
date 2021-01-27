@@ -94,9 +94,7 @@ namespace Vipera
             if (GetSettings() == false)
             {
                 Debug.LogError("No AdvertisingSettings found or could not load.\n" +
-                               "Make sure you created a file named \"AdvertisingSettings\" and put the variables you want to change there\n" +
-                               "For the variables to work they need to have the same name and be public non-static\n" +
-                               "Class name does not make a difference as it's converted to JSON and back into a settings class");
+                               "Make sure you follow the documentation on creating this file");
                 yield break;
             }
             
