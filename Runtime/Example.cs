@@ -4,7 +4,7 @@ public class ViperaAdExample
 {
     void Start()
     {
-        Advertising.adsRemoved = true; // If you want to disable ads
+        Advertising.ads_removed = true; // If you want to remove ads
         Advertising.interstitial_time_between = 30;   // If you want to adjust the minimum time between intersticials
         Advertising.rewarded_video_time_between = 30; // Same for video
 
