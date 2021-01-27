@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Vipera
 {
     public class Advertising : MonoBehaviour
     {
-        // Remove IDs/ find a way to load from remote config
-        public const string admob_ios_appid = "ca-app-pub-6126530391147430~3688734903";
-        public const string admob_android_appid = "ca-app-pub-6126530391147430~4511452628";
+        static string settingsFileName = "AdvertisingSettings";
 
         public static Advertising instance;
         public static bool IsInitialized = false;
 
-        public static bool adsRemoved = false;
+        static bool usingFirebase = false;
+        static bool firebaseFetchComplete = false;
+
+        public static bool ads_disabled = false;
+        public static bool ads_removed = false;
+
+        public static string ironsource_id_android = "";
+        public static string ironsource_id_iOS = "";
+        
+        public static string admob_android_appid = "";
+        public static string admob_ios_appid = "";
+
         public static int interstitial_time_between = 30;
         public static int rewarded_video_time_between = 30;
 
@@ -29,26 +37,82 @@ namespace Vipera
             if (instance != null)
                 return;
 
+#if VIPERA_FIREBASE
+            usingFirebase = true;
+            RemoteConfig.OnFetchComplete += OnFechRemoteConfigComplete;
+#endif
+
             instance = new GameObject("Vipera Advertising").AddComponent<Advertising>();
             DontDestroyOnLoad(instance.gameObject);
-
         }
+
+#if VIPERA_FIREBASE
+        static void OnFechRemoteConfigComplete()
+        {
+            RemoteConfig.OnFetchComplete -= OnFechRemoteConfigComplete;
+            firebaseFetchComplete = true;
+        }
+#endif
+
+        bool GetSettings()
+        {
+            try
+            {
+                string json = JsonUtility.ToJson(Resources.Load(settingsFileName));
+
+                AdvertisingSettingsObject loadedSettings = JsonUtility.FromJson<AdvertisingSettingsObject>(json);
+
+                ads_disabled = loadedSettings.ads_disabled;
+                ads_removed = loadedSettings.ads_removed;
+                ironsource_id_android = loadedSettings.ironsource_id_android;
+                ironsource_id_iOS = loadedSettings.ironsource_id_iOS;
+                admob_android_appid = loadedSettings.admob_android_appid;
+                admob_ios_appid = loadedSettings.admob_ios_appid;
+
+                Debug.Log(JsonUtility.ToJson(loadedSettings));
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private IEnumerator Start()
         {
-            yield return new WaitForEndOfFrame();
-            Debug.Log("Ads Initializing part 1");
-            if (adsRemoved)
+            if (usingFirebase)
             {
-                Debug.Log("Ads disabled, initialization ended");
+                while (!firebaseFetchComplete)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+
+            yield return new WaitForEndOfFrame();
+
+            if (GetSettings() == false)
+            {
+                Debug.LogError("No AdvertisingSettings found or could not load.\n" +
+                               "Make sure you created a file named \"AdvertisingSettings\" and put the variables you want to change there\n" +
+                               "For the variables to work they need to have the same name and be public non-static\n" +
+                               "Class name does not make a difference as it's converted to JSON and back into a settings class");
+                yield break;
+            }
+            
+
+            Debug.Log("Ads Initializing part 1");
+            if (ads_removed || ads_disabled)
+            {
+                Debug.Log("Ads removed or disabled, initialization ended");
                 yield break;
             }
 
 #if UNITY_IOS
-        IronSource.Agent.init("8be367c5", IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
+        IronSource.Agent.init(id_iOS, IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
 #elif UNITY_ANDROID
-        IronSource.Agent.init("8be2f4b5", IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
+        IronSource.Agent.init(id_android, IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
 #endif
-            IsInitialized = true;
 
             banner = ScriptableObject.CreateInstance<AdBanner>();
             banner.LoadBanner();
@@ -64,8 +128,8 @@ namespace Vipera
 
             rewardedVideo = ScriptableObject.CreateInstance<AdRewardedVideo>();
 
+            IsInitialized = true;
             Debug.Log("Ads Initializing DONE");
-
         }
 
 
