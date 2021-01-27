@@ -79,13 +79,63 @@ namespace Vipera
         private void RewardedVideoShowFailed(IronSourceError error)
         {
             Debug.Log("Rewarded Video load failed\n Error code: " + error.getErrorCode() + "  Description: " + error.getDescription());
-            videoRewardStatusCallback.Invoke(false);
+
+#if VIPERA_CORE
+            MainThreadQueue.Enqueue(() =>
+            {
+                try
+                {
+                    videoRewardStatusCallback.Invoke(false);
+                }
+                catch
+                {
+                    Debug.Log("Nothing listening for \"videoRewardStatusCallback\"");
+                }
+            });
+#else
+            
+            try
+            {
+                videoRewardStatusCallback.Invoke(false);
+            }
+            catch
+            {
+                Debug.Log("Nothing listening for \"videoRewardStatusCallback\"");
+            }
+#endif
+
+#if VIPERA_FIREBASE
+            Analytics.LogEvent("rewarded_video_show_failed", "error_code", error.getErrorCode());
+#else
+            Firebase.Analytics.FirebaseAnalytics.LogEvent("rewarded_video_show_failed", "error_code", error.getErrorCode());
+#endif
         }
 
         private void RewardedVideoRewarded(IronSourcePlacement reward)
         {
+#if VIPERA_CORE
+            MainThreadQueue.Enqueue(() =>
+            {
+                try
+                {
+                    videoRewardStatusCallback.Invoke(true);
+                }
+                catch
+                {
+                    Debug.Log("Nothing listening for \"videoRewardStatusCallback\"");
+                }
+            });
+#else
             Debug.Log("Rewarded video rewarded");
-            videoRewardStatusCallback.Invoke(true);
+            try
+            {
+                videoRewardStatusCallback.Invoke(true);
+            }
+            catch
+            {
+                Debug.Log("Nothing listening for \"videoRewardStatusCallback\"");
+            }
+#endif
         }
 
         private void RewardedVideoEnded()
@@ -101,6 +151,19 @@ namespace Vipera
         private void RewardedVideoAvailabilityChanged(bool available)
         {
             Debug.Log("Rewarded video availability changed, now available: " + available);
+#if VIPERA_CORE
+            MainThreadQueue.Enqueue(() =>
+            {
+                try
+                {
+                    videoAvailableStatusCallback.Invoke(available);
+                }
+                catch
+                {
+                    Debug.Log("Nothing listening for RewardedVideoAvailabilityChaged");
+                }
+            });
+#else
             try
             {
                 videoAvailableStatusCallback.Invoke(available);
@@ -109,6 +172,7 @@ namespace Vipera
             {
                 Debug.Log("Nothing listening for RewardedVideoAvailabilityChaged");
             }
+#endif
         }
 
         private void RewardedVideoClosed()
@@ -128,7 +192,6 @@ namespace Vipera
         private void RewardedVideoOpened()
         {
             Debug.Log("Rewarded video opened");
-
         }
     }
 }

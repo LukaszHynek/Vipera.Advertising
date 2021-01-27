@@ -45,7 +45,11 @@ namespace Vipera
         void OnBannerLoadFailed(IronSourceError error)
         {
             Debug.Log("Banner failed to load\n Error code: " + error.getErrorCode() + "  Description: " + error.getDescription());
+#if VIPERA_FIREBASE
+            Analytics.LogEvent("banner_load_failed", "error_code", error.getErrorCode());
+#else
             Firebase.Analytics.FirebaseAnalytics.LogEvent("banner_load_failed", "error_code", error.getErrorCode());
+#endif
         }
     }
 }

@@ -92,7 +92,11 @@ namespace Vipera
         private void OnInterstitialLoadFailed(IronSourceError error)
         {
             Debug.Log("Interstitial load failed\n Error code: " + error.getErrorCode() + "  Description: " + error.getDescription());
+#if VIPERA_FIREBASE
+            Analytics.LogEvent("interstitial_load_failed", "error_code", error.getErrorCode());
+#else
             Firebase.Analytics.FirebaseAnalytics.LogEvent("interstitial_load_failed", "error_code", error.getErrorCode());
+#endif
         }
 
         private void OnInterstitialReady()
@@ -112,19 +116,40 @@ namespace Vipera
             {
                 Debug.Log("Nothing listening for \"interstitialFailed\"");
             }
+#if VIPERA_FIREBASE
+            Analytics.LogEvent("interstitial_show_failed", "error_code", error.getErrorCode());
+#else
             Firebase.Analytics.FirebaseAnalytics.LogEvent("interstitial_show_failed", "error_code", error.getErrorCode());
+#endif
         }
 
         private void OnInterstitialShowSucceeded()
         {
             Debug.Log("Interstitial show succeeded");
+#if VIPERA_FIREBASE
+            Analytics.LogEvent("interstitial_show");
+#else
             Firebase.Analytics.FirebaseAnalytics.LogEvent("interstitial_show");
+#endif
         }
 
 
         private void OnInterstitialClosed()
         {
             Debug.Log("Interstitial closed");
+#if VIPERA_CORE
+            MainThreadQueue.Enqueue(() => 
+            {
+                try
+                {
+                    interstitialClosed.Invoke();
+                }
+                catch
+                {
+                    Debug.Log("Nothing listening for \"interstitialClosed\"");
+                }
+            });
+#else
             try
             {
                 interstitialClosed.Invoke();
@@ -133,6 +158,7 @@ namespace Vipera
             {
                 Debug.Log("Nothing listening for \"interstitialClosed\"");
             }
+#endif
             LoadInterstitial();
         }
 
@@ -144,7 +170,11 @@ namespace Vipera
         private void OnInterstitialClicked()
         {
             Debug.Log("Interstitial clicked");
+#if VIPERA_FIREBASE
+            Analytics.LogEvent("interstitial_clicked");
+#else
             Firebase.Analytics.FirebaseAnalytics.LogEvent("interstitial_clicked");
+#endif
         }
     }
 }
