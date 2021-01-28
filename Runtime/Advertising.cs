@@ -105,9 +105,9 @@ namespace Vipera
             }
 
 #if UNITY_IOS
-        IronSource.Agent.init(id_iOS, IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
+        IronSource.Agent.init(ironsource_id_iOS, IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
 #elif UNITY_ANDROID
-        IronSource.Agent.init(id_android, IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
+        IronSource.Agent.init(ironsource_id_android, IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.BANNER);
 #endif
 
             banner = ScriptableObject.CreateInstance<AdBanner>();
